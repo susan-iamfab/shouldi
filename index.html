@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Should I Stay or Should I Go? | I Am Fabulous</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0a0e;
+    --surface: #161019;
+    --card: #1e1525;
+    --border: #2e2035;
+    --accent: #c9185b;
+    --accent-soft: #e91e8c22;
+    --gold: #e8c97a;
+    --text: #f0eaf5;
+    --muted: #9b8faa;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Atmospheric background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, #3d0a2233 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, #1a0d3022 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 60px 0 50px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .brand {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto 32px;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 0 auto;
+  }
+
+  /* Progress */
+  .progress-container {
+    margin-bottom: 40px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    opacity: 0.6;
+  }
+
+  .question-number {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .question-subtext {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent-soft);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .option:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .option:hover::before { opacity: 1; }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--white);
+  }
+
+  .option.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 16px;
+  }
+
+  /* Textarea */
+  .reflection-area {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.7;
+    resize: none;
+    min-height: 120px;
+    transition: border-color 0.2s ease;
+    outline: none;
+  }
+
+  .reflection-area::placeholder { color: var(--muted); }
+  .reflection-area:focus { border-color: var(--accent); }
+
+  /* Buttons */
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary:hover {
+    background: #e01f6a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px #c9185b44;
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: var(--muted);
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 28px;
+  }
+
+  /* Insight box */
+  .insight-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .insight-box strong {
+    color: var(--gold);
+    font-style: normal;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Results */
+  .results-screen {
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .result-hero {
+    text-align: center;
+    padding: 40px 0 32px;
+  }
+
+  .result-score-ring {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .result-score-ring svg {
+    transform: rotate(-90deg);
+  }
+
+  .score-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--white);
+  }
+
+  .result-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .result-sub {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  .result-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .result-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+
+  .result-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .result-section p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, #1e0d2a, #2a0f1e);
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: 36px;
+    text-align: center;
+    margin-top: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, #c9185b11 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cta-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-box p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+
+  .btn-cta {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 18px 44px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-cta:hover {
+    background: #e01f6a;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px #c9185b55;
+  }
+
+  .cta-note {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    opacity: 0.7;
+  }
+
+  /* Intro screen */
+  .intro-screen {
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    opacity: 0.6;
+  }
+
+  .intro-card p {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+
+  .intro-card p:last-child { margin-bottom: 0; }
+
+  .intro-card strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .ground-rules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .rule {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .rule-icon { font-size: 24px; margin-bottom: 10px; }
+
+  .rule-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* Screen transitions */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding-top: 48px;
+    font-size: 12px;
+    color: var(--muted);
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+  }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    .container { padding: 24px 16px 60px; }
+    .question-card, .intro-card { padding: 28px 24px; }
+    .ground-rules { grid-template-columns: 1fr; }
+    .nav-buttons { flex-direction: column-reverse; }
+    .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="brand">I Am Fabulous</div>
+    <h1>Should I Stay or<br><em>Should I Go?</em></h1>
+    <p class="subtitle">The brutally honest 10-question guide for humans lying awake at 2am wondering if their relationship is over.</p>
+    <div class="divider"></div>
+  </div>
+
+  <!-- INTRO SCREEN -->
+  <div id="intro" class="screen active intro-screen">
+    <div class="intro-card">
+      <p>If you're here, your brain has been running the same loop. <strong>Stay. Go. Stay. Go.</strong> One day you're done. The next you're spiralling about blowing up your whole life.</p>
+      <p>Here's the truth nobody tells you: <strong>you don't need more opinions. You need better questions.</strong></p>
+      <p>This guide won't tell you what to do. It will help you think clearly enough to hear the answer that already exists inside you.</p>
+      <p>Because deep down? <strong>You already know.</strong> You just haven't given yourself permission to say it out loud yet.</p>
+    </div>
+
+    <div class="ground-rules">
+      <div class="rule">
+        <div class="rule-icon">⏳</div>
+        <div class="rule-text">Don't rush. This isn't a BuzzFeed quiz.</div>
+      </div>
+      <div class="rule">
+        <div class="rule-icon">🔒</div>
+        <div class="rule-text">Don't share your answers yet. This is just you and the truth.</div>
+      </div>
+      <div class="rule">
+        <div class="rule-icon">🚫</div>
+        <div class="rule-text">Don't judge your answers. There are no morally superior responses here.</div>
+      </div>
+    </div>
+
+    <div style="text-align:center">
+      <button class="btn-primary" onclick="startQuiz()">I'm ready. Let's begin. 💋</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz" class="screen">
+    <div class="progress-container">
+      <div class="progress-label">
+        <span id="progress-text">Question 1 of 10</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="question-number" id="q-number">Question 1</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="question-subtext" id="q-subtext"></div>
+      <div id="q-input"></div>
+      <div class="insight-box" id="q-insight" style="display:none">
+        <strong>What this tells you</strong>
+        <span id="q-insight-text"></span>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-secondary" id="btn-back" onclick="goBack()" style="display:none">← Back</button>
+      <button class="btn-primary" id="btn-next" onclick="goNext()" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results" class="screen results-screen">
+    <div class="result-hero">
+      <div class="result-score-ring">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#2e2035" stroke-width="8"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="url(#scoreGrad)" stroke-width="8"
+            stroke-linecap="round" id="score-arc" stroke-dasharray="314" stroke-dashoffset="314"/>
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#c9185b"/>
+              <stop offset="100%" stop-color="#e8c97a"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-number" id="score-display">—</div>
+      </div>
+      <div class="result-headline" id="result-headline"></div>
+      <div class="result-sub" id="result-sub"></div>
+    </div>
+
+    <div class="result-sections" id="result-sections"></div>
+
+    <div class="cta-box">
+      <h2>Ready to think it through properly?</h2>
+      <p>One focused hour with me. We use The Fabulous Framework™ to cut through the noise and bring real clarity to your situation. No therapy. No judgement. No pressure. Just clear thinking when everything feels messy.</p>
+      <a href="https://iamfabulous.co" class="btn-cta">Book a Decision Session →</a>
+      <div class="cta-note">$500 · One hour · You'll leave knowing your next move.</div>
+    </div>
+
+    <div style="text-align:center; margin-top:28px">
+      <button class="btn-secondary" onclick="restartQuiz()">Start again</button>
+    </div>
+  </div>
+
+  <div class="footer">iamfabulous.co · Susan Hannam 💋</div>
+</div>
+
+<script>
+const questions = [
+  {
+    number: "Question 1",
+    text: "What are you actually unhappy about?",
+    subtext: "Be specific. Not 'everything.' Not 'the marriage.' That's too vague to be useful. If you want clarity, you need details.",
+    type: "options",
+    options: [
+      { text: "I can name specific behaviours and situations that are hurting me", score: 2, insight: "Good. You know what's broken. That's further than most people get — they stay in the fog because naming it makes it real. So now it's real. The next question is whether it's fixable, and whether both of you actually give a damn about fixing it." },
+      { text: "It's a general feeling — everything feels off but I can't pinpoint it", score: 1, insight: "Vague misery is exhausting because you can't fight what you can't name. Try this: 'I feel _____ when _____ happens.' Write it down. Keep going until something makes you wince. That wince? That's your answer trying to get out." },
+      { text: "I'm not sure I'm unhappy with them, or just unhappy in general", score: 0, insight: "This matters more than you think. Because if you're just generally unhappy — with your life, your direction, yourself — blowing up your relationship won't fix it. You'll just be unhappy somewhere else, with someone else, wondering what went wrong. Figure out what's actually broken first." }
+    ]
+  },
+  {
+    number: "Question 2",
+    text: "Have you actually communicated this clearly?",
+    subtext: "Not hinted. Not hoped they'd notice. Not expected them to magically read your mind. Actually said the words out loud.",
+    type: "options",
+    options: [
+      { text: "Yes — I've said it directly and clearly, more than once", score: 2, insight: "Then their response is your data. Not what they said — what actually changed. Nothing changed? That's not a communication problem. That's them telling you, clearly and repeatedly, that they're not going to. Believe them." },
+      { text: "I've hinted, or brought it up, but not been fully direct", score: 1, insight: "Hinting is not communicating. It's hoping. And hope is not a strategy. Most people are spectacularly bad at reading between the lines — especially when they're also stressed and defensive. Say the actual words. Out loud. One proper conversation beats ten half-ones every time." },
+      { text: "No — I haven't properly said it", score: 0, insight: "Then you're not ready to make this decision yet. You cannot fairly decide to leave a problem that was never clearly named. Say it. All of it. See what happens. You might be surprised — or you might get the confirmation you've been dreading. Either way, you'll have something real to work with." }
+    ]
+  },
+  {
+    number: "Question 3",
+    text: "Is this actually fixable?",
+    subtext: "If your partner changed — would you stay? Is this a behaviour that could realistically change, or is it part of who they fundamentally are?",
+    type: "options",
+    options: [
+      { text: "Yes, it's fixable — and both of us would need to try", score: 2, insight: "Okay. But 'trying' needs to mean something specific — not vibes and good intentions that evaporate in three weeks. What does trying actually look like? Counselling? Specific conversations? Concrete changes with a real timeline? Vague trying is just postponing the same conversation." },
+      { text: "It might be fixable, but only I seem willing to do the work", score: 1, insight: "You cannot fix a two-person problem by yourself. Full stop. You can work on your side — always — but if you're the only one showing up, that's not a relationship in repair. That's you dragging both of you forward while they watch. Ask yourself honestly: how much longer?" },
+      { text: "No — this is who they are. It's not going to change.", score: 0, insight: "Then the question isn't whether to fix the relationship. It's whether you can live with it exactly as it is, forever. Not a better version of it. This version. Right now. For most people, when they actually sit with that question, the fog clears pretty fast." }
+    ]
+  },
+  {
+    number: "Question 4",
+    text: "What would actually need to change?",
+    subtext: "If you stayed, what specifically would need to be different? Not vague things like 'more effort.' Concrete, measurable changes a human could actually make.",
+    type: "options",
+    options: [
+      { text: "My list is reasonable — things a person could realistically change", score: 2, insight: "Then say the list. Out loud. To them. Not as an ultimatum — as information. 'For this to work, I need these things to change. Can you commit to that?' Watch what they do, not what they say. Actions in the next 30 days will tell you more than promises ever will." },
+      { text: "Some things are reasonable, some are probably wishful thinking", score: 1, insight: "The wishful thinking part is where you need to get brutally honest with yourself. Are you holding out for a version of this person that has never actually existed? Because that's not hope — that's a fantasy. And you can love a fantasy for years without ever getting what you actually need." },
+      { text: "If I'm honest, I'd need them to become a completely different person", score: 0, insight: "That's not a change list. That's a replacement order. And it's one of the most important things you can admit to yourself — because loving someone and being right for each other are two completely different things. You can grieve both at the same time." }
+    ]
+  },
+  {
+    number: "Question 5",
+    text: "Are you staying out of love — or out of fear?",
+    subtext: "Are you staying because you genuinely love this person and want to make it work? Or because you're terrified of what happens if you leave?",
+    type: "options",
+    options: [
+      { text: "Mostly love — I genuinely want to rebuild this", score: 2, insight: "Good. Love isn't enough on its own — but it's not nothing either. If it's genuinely love and not just familiarity dressed up as love, that's worth working with. The question now is whether both of you want it enough to do what it actually takes. Not talk about it. Do it." },
+      { text: "Honestly, it's a mix of both", score: 1, insight: "That's probably the most honest answer in this whole quiz. Fear and love are messier together than anyone admits. Here's the question worth sitting with: if you removed the fear entirely — the financial stuff, the loneliness, the upheaval — would love alone be enough? That's where your real answer is hiding." },
+      { text: "If I'm really honest, it's mostly fear", score: 0, insight: "Fear is human. Fear of being alone, being broke, being judged, getting it catastrophically wrong. All valid. But here's the thing about fear — it's a terrible long-term housemate. Right now it feels like protection. Give it a few more years and it'll feel like a prison." }
+    ]
+  },
+  {
+    number: "Question 6",
+    text: "What are you afraid will happen if you leave?",
+    subtext: "Name every fear. The logical ones. And the dramatic ones. Then ask: which are realistic, which are worst-case scenarios your brain invented, and which could be planned for?",
+    type: "options",
+    options: [
+      { text: "My fears are real but manageable — I could plan for most of them", score: 2, insight: "This is what a functioning relationship with fear looks like. You're not pretending it doesn't exist and you're not letting it run the show. The logistics of leaving are genuinely hard — but hard and impossible are not the same thing. Most fears have a plan. Find it." },
+      { text: "Some fears are practical, but some feel overwhelming and out of control", score: 1, insight: "Separate them ruthlessly. Practical fears — make a plan. The overwhelming ones? Those are usually less about logistics and more about what you believe about yourself. Whether you'll be okay. Whether you're enough. Whether you deserve better. That's a different conversation entirely — and an important one." },
+      { text: "The fears feel enormous and paralysing — I can't see past them", score: 0, insight: "Paralysing fear isn't about your relationship. It's about what you believe you're capable of surviving. And somewhere along the way, someone — or life — convinced you that you couldn't handle it alone. That story is probably very old. And very possibly complete bullshit." }
+    ]
+  },
+  {
+    number: "Question 7",
+    text: "What are you afraid will happen if you stay?",
+    subtext: "Most people spend all their time worrying about the risks of leaving. But there are also risks in staying. In five years, if nothing changes — what does your life look like?",
+    type: "options",
+    options: [
+      { text: "Staying feels okay — I can see a good future if we both try", score: 2, insight: "That's genuinely not nothing. Plenty of people doing this quiz can't say that. If staying feels like a real option — not resignation, not making peace with misery, but actually okay — then the path forward probably involves trying properly before you make any final calls." },
+      { text: "Staying feels like settling — not terrible, but not the life I want", score: 1, insight: "'Not terrible' is a slow leak, not a life. Settling is insidious precisely because it's bearable. You won't hit rock bottom. You'll just quietly shrink. In five years of settling, you're still here — just older, more tired, and further from the version of yourself you actually wanted to be." },
+      { text: "Staying feels like a slow death of who I am", score: 0, insight: "Don't dress that up or talk yourself out of it. 'Slow death of who I am' isn't drama — it's diagnosis. The risk of staying isn't just unhappiness. It's disappearing. Gradually. Politely. Until one day you look up and you don't recognise the person who's left." }
+    ]
+  },
+  {
+    number: "Question 8",
+    text: "What do you want your life to look like in five years?",
+    subtext: "Ignore what's 'realistic' for a moment. Just imagine. You wake up. Where are you? Who's beside you? How do you feel? Now ask: can you get there from where you are now?",
+    type: "options",
+    options: [
+      { text: "My five-year vision includes this person — genuinely, not out of obligation", score: 2, insight: "Trust that. The five-year question is the clearest one in this whole quiz because it bypasses your anxious brain and goes straight to your gut. If they're genuinely in your future — not out of habit, not because it's easier, but because you actually want them there — build towards that. Deliberately." },
+      { text: "I'm not sure — my vision is fuzzy when I try to include them", score: 1, insight: "The fuzziness is information. Sometimes it means you're too exhausted and burnt out to imagine anything clearly. Sometimes it means they don't fit. Ask yourself honestly: is the picture fuzzy because I'm scared of wanting too much — or because deep down I already know they're not in it?" },
+      { text: "My five-year vision doesn't include them — and that feels honest", score: 0, insight: "That's not panic talking. That's your gut, finally getting a word in. The five-year question strips out the noise and leaves you with what you actually want. If they're not in your honest future, that's not a small thing. That's probably the most important thing you've answered today." }
+    ]
+  },
+  {
+    number: "Question 9",
+    text: "Are you making this decision from courage or from panic?",
+    subtext: "Panic and courage feel surprisingly similar — both come with adrenaline. But they lead to very different outcomes.",
+    type: "options",
+    options: [
+      { text: "I feel scared but I'm thinking clearly and making decisions from my values", score: 2, insight: "That's courage — and it doesn't feel heroic. It just feels clear. You can sit in the discomfort without needing to escape it immediately. Decisions made from this place are the ones you'll be able to live with, whatever happens next. Trust it." },
+      { text: "I oscillate — sometimes clear, sometimes completely spinning out", score: 1, insight: "That's actually normal, and it means you're taking this seriously rather than just reacting. Pay attention to when the clarity shows up. What's different in those moments? Less noise? More sleep? Time alone? Figure out what creates your clear-headedness, then make decisions from there — not from the spin." },
+      { text: "I feel like I must decide NOW — my thoughts are racing constantly", score: 0, insight: "Step away from the 3am Google spiral. You are not in immediate danger. The urgency is your nervous system catastrophising — not reality giving you a deadline. Panic decisions are almost always ones you'll revisit. Regulate first. The answer will still be there once you can actually think straight." }
+    ]
+  },
+  {
+    number: "Question 10",
+    text: "If you knew you'd be okay either way — what would you choose?",
+    subtext: "Imagine something magical happened. You were guaranteed that either choice would eventually work out. Both futures lead to stability and happiness. Which path would you choose — not the safest, not the one that pleases everyone else. Just the one that feels most like yours.",
+    type: "options",
+    options: [
+      { text: "I'd stay — and that feels genuinely like my answer, not fear talking", score: 2, insight: "Then stay — and actually choose it. Not by default. Not because it's easier. Not because the alternative is terrifying. A deliberate, conscious choice to build something with this person is completely different from just... not leaving. One of those is a foundation. The other is a holding pattern." },
+      { text: "I'm still genuinely unsure — both feel possible", score: 1, insight: "Real uncertainty is different from avoidance — and you need to know which one this is. If you've been honest through all ten questions and you're genuinely still unsure, you need more information. That means real conversations, a defined timeframe, and an actual answer — not an indefinite maybe that quietly becomes your whole life." },
+      { text: "I'd go — and saying that out loud feels like the truth", score: 0, insight: "There it is. That's not the fear talking. That's you, finally being honest with yourself. You don't need the full plan yet. You don't need to know how. You just need to stop pretending you don't know what you know. The rest — the logistics, the timeline, the hard conversations — that's all figureoutable. This part was the hardest bit." }
+    ]
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+let scores = [];
+
+function startQuiz() {
+  document.getElementById('intro').classList.remove('active');
+  document.getElementById('quiz').classList.add('active');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('q-number').textContent = q.number;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-subtext').textContent = q.subtext;
+
+  const insightEl = document.getElementById('q-insight');
+  document.getElementById('q-insight-text').textContent = q.insight;
+
+  // Progress
+  const pct = Math.round((currentQ / questions.length) * 100);
+  document.getElementById('progress-text').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  // Back button
+  document.getElementById('btn-back').style.display = currentQ > 0 ? 'block' : 'none';
+
+  // Next button
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.textContent = currentQ === questions.length - 1 ? 'See my results →' : 'Continue →';
+
+  // Render input
+  const inputEl = document.getElementById('q-input');
+
+  const savedAnswer = answers[currentQ];
+  let hasAnswer = savedAnswer !== undefined && savedAnswer !== '';
+
+  inputEl.innerHTML = '';
+  insightEl.style.display = 'none';
+
+  const optionsDiv = document.createElement('div');
+  optionsDiv.className = 'options';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option' + (savedAnswer === i ? ' selected' : '');
+    btn.textContent = opt.text;
+    btn.onclick = () => {
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      btn.classList.add('selected');
+      answers[currentQ] = i;
+      scores[currentQ] = opt.score;
+      nextBtn.disabled = false;
+      document.getElementById('q-insight-text').textContent = opt.insight;
+      insightEl.style.display = 'block';
+    };
+    optionsDiv.appendChild(btn);
+  });
+  inputEl.appendChild(optionsDiv);
+
+  if (hasAnswer) {
+    document.getElementById('q-insight-text').textContent = q.options[savedAnswer].insight;
+    insightEl.style.display = 'block';
+  }
+
+  nextBtn.disabled = !hasAnswer;
+
+  // Animate card
+  const card = document.getElementById('question-card');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'fadeUp 0.5s ease both';
+}
+
+function goNext() {
+  if (answers[currentQ] === undefined) return;
+
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function goBack() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+
+  const total = scores.reduce((a, b) => a + b, 0);
+  const max = questions.length * 2;
+  const pct = Math.round((total / max) * 100);
+
+  // Score ring animation
+  setTimeout(() => {
+    const arc = document.getElementById('score-arc');
+    const circumference = 314;
+    const offset = circumference - (pct / 100) * circumference;
+    arc.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+    arc.style.strokeDashoffset = offset;
+    document.getElementById('score-display').textContent = pct + '%';
+  }, 300);
+
+  let headline, sub, sections;
+
+  if (pct >= 70) {
+    headline = "You're not done yet.";
+    sub = "Your answers suggest this relationship has real foundations worth fighting for. The problems feel fixable, communication is possible, and love is genuinely part of why you're staying. That matters.";
+    sections = [
+      { title: "What your answers are telling you", body: "You can name what's wrong, you believe it could change, and your vision of the future still includes this person. Those aren't small things. The work ahead is real — but the raw material is there." },
+      { title: "Your honest next move", body: "Stop circling the decision and start having the specific conversations. Write down the three concrete changes that would make the difference. Then say them out loud — clearly, directly, without softening. What happens next will tell you everything you need to know." },
+      { title: "One thing to sit with", body: "The fact that you're doing this quiz means something is wrong. Don't mistake 'worth fighting for' as a reason to keep tolerating what's currently unacceptable. Fighting for a relationship looks like both people trying — not just you." }
+    ];
+  } else if (pct >= 40) {
+    headline = "You're standing at a crossroads.";
+    sub = "Your answers don't point clearly in either direction — and that's actually useful information. You're not done, but you're not staying for the right reasons either. Something needs to shift.";
+    sections = [
+      { title: "What your answers are telling you", body: "There's genuine ambivalence here. Some things feel fixable. Some things feel like they've already calcified. You're not sure if you're staying out of love or out of fear — and honestly, it might be both." },
+      { title: "Your honest next move", body: "You need clarity before you can make this decision. That means getting really specific — about what would need to change, about what you're actually afraid of, about what the next five years look like in both scenarios. Sitting in the fog isn't a strategy." },
+      { title: "One thing to sit with", body: "Ambivalence this deep is exhausting. You've been carrying this loop for a long time. At some point, not deciding IS a decision — and it's worth asking whether the limbo is costing you more than either path forward would." }
+    ];
+  } else {
+    headline = "You already know your answer.";
+    sub = "Your answers are pointing in a clear direction. The fears, the vagueness, the sense that you'd need them to become a different person — that's not confusion. That's clarity you haven't quite let yourself accept yet.";
+    sections = [
+      { title: "What your answers are telling you", body: "You're not staying out of love. You're staying out of fear — of the unknown, of hurting people, of getting it wrong, of being alone. Those are real and valid fears. But they're not a reason to stay in a relationship that isn't working." },
+      { title: "Your honest next move", body: "You don't have to decide everything today. But you do have to stop pretending you don't know. Start by talking to someone who can help you think through the practical fears — financial, logistical, the kids. Fear shrinks when you give it a plan." },
+      { title: "One thing to sit with", body: "You asked 'what about me?' somewhere in the middle of all of this. That question deserves an honest answer. A life that's honest, peaceful, and aligned with who you are — you're allowed to want that. Even when it feels scary. Especially then." }
+    ];
+  }
+
+  document.getElementById('result-headline').textContent = headline;
+  document.getElementById('result-sub').textContent = sub;
+
+  const sectionsEl = document.getElementById('result-sections');
+  sectionsEl.innerHTML = '';
+  sections.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'result-section';
+    div.innerHTML = `<h3>${s.title}</h3><p>${s.body}</p>`;
+    sectionsEl.appendChild(div);
+  });
+}
+
+function restartQuiz() {
+  currentQ = 0;
+  answers = [];
+  scores = [];
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('intro').classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
